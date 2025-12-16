@@ -1,11 +1,25 @@
 version: '2.3'
+
 services:
   openpose:
+    container_name: openpose-api
     build:
       context: .
       dockerfile: ./docker/Dockerfile
+
     runtime: nvidia
+
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
-    working_dir: /usr/local/openpose
+      - NVIDIA_DRIVER_CAPABILITIES=video,compute,utility
+
+    volumes:
+      - ./docker/models:/usr/local/openpose/models
+      - ./docker/api.py:/workspace/api.py
+
+    ports:
+      - "8000:8000"
+
+    working_dir: /workspace
     tty: true
+    stdin_open: true
